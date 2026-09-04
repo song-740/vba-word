@@ -186,3 +186,112 @@ Sub BoiDamCauSoTrichSGK()
     MsgBox "Da boi dam xong! Tong so cum 'Cau x [y] [z]:' da duyet: " & demSoLan, vbInformation
 End Sub
 ```
+
+# 5. Bôi đậm "1." "2."
+
+```sh
+Sub BoiDamSoDauCham()
+
+    Dim rng As Range
+    Dim demSoLan As Long
+    Dim mauTim As String
+
+    demSoLan = 0
+
+    ' Mau tim: mot hoac nhieu chu so dung o dau tu, theo sau la dau cham
+    mauTim = "<[0-9]{1,}\."
+
+    Set rng = ActiveDocument.Content
+
+    With rng.Find
+        .ClearFormatting
+        .Replacement.ClearFormatting
+
+        .Text = mauTim
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchWildcards = True
+
+        Do While .Execute
+            rng.Font.Bold = True
+            demSoLan = demSoLan + 1
+            rng.Collapse wdCollapseEnd
+        Loop
+    End With
+
+    MsgBox "Da hoan thanh!" & vbCrLf & _
+           "Da boi dam " & demSoLan & " cum so co dau cham da duyet.", _
+           vbInformation, "Hoan tat"
+
+End Sub
+```
+
+# 6. Thiết lập header "facebook.com"
+
+```sh
+Sub ThietLapHeader()
+
+    Dim doc As Document
+    Dim hdr As HeaderFooter
+    Dim rng As Range
+    Dim tenNguoi As String
+    Dim gachNgang As String
+    Dim linkFb As String
+    Dim soDienThoai As String
+    
+    Set doc = ActiveDocument
+    
+    ' Dung ChrW de dung ky tu co dau, tranh loi hien thi dau trong VBA Editor
+    tenNguoi = ChrW(272) & "inh V" & ChrW(259) & "n T" & ChrW(249) & "ng "
+    gachNgang = ChrW(8211) & " "
+    linkFb = "facebook.com/tung.dvan.777 "
+    soDienThoai = "0987.640.315"
+    
+    ' Lay Header cua Section dau tien (loai Primary - trang thuong)
+    Set hdr = doc.Sections(1).Headers(wdHeaderFooterPrimary)
+    
+    ' Xoa noi dung cu trong Header (neu co)
+    hdr.Range.Delete
+    
+    ' Dat khoang cach Header from Top = 0.8 cm
+    doc.Sections(1).PageSetup.HeaderDistance = CentimetersToPoints(0.8)
+    
+    ' 1. Nhap ten (dam)
+    Set rng = hdr.Range
+    rng.Text = tenNguoi
+    rng.Font.Bold = True
+    rng.Font.Size = 12
+    
+    ' 2. Nhap gach ngang + link facebook (khong dam)
+    Set rng = hdr.Range
+    rng.Collapse wdCollapseEnd
+    rng.InsertAfter gachNgang & linkFb
+    rng.Font.Bold = False
+    rng.Font.Size = 12
+    
+    ' 3. Nhap gach ngang (khong dam)
+    Set rng = hdr.Range
+    rng.Collapse wdCollapseEnd
+    rng.InsertAfter gachNgang
+    rng.Font.Bold = False
+    rng.Font.Size = 12
+    
+    ' 4. Nhap so dien thoai (dam)
+    Set rng = hdr.Range
+    rng.Collapse wdCollapseEnd
+    rng.InsertAfter soDienThoai
+    rng.Font.Bold = True
+    rng.Font.Size = 12
+    
+    ' Can phai cho toan bo doan Header
+    hdr.Range.ParagraphFormat.Alignment = wdAlignParagraphRight
+    
+    ' Dam bao khong co border nao
+    hdr.Range.ParagraphFormat.Borders.Enable = False
+    
+    MsgBox "Da thiet lap Header xong!", vbInformation, "Hoan tat"
+
+End Sub
+```
+
