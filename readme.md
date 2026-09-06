@@ -255,7 +255,7 @@ Sub ThietLapHeader()
     hdr.Range.Delete
     
     ' Dat khoang cach Header from Top = 0.8 cm
-    doc.Sections(1).PageSetup.HeaderDistance = CentimetersToPoints(0.8)
+    doc.Sections(1).PageSetup.HeaderDistance = CentimetersToPoints(0.5)
     
     ' 1. Nhap ten (dam)
     Set rng = hdr.Range
@@ -295,3 +295,116 @@ Sub ThietLapHeader()
 End Sub
 ```
 
+# 7. Watermark
+
+
+```sh
+Sub TaoWatermark()
+
+    Dim doc As Document
+    Dim sec As Section
+    Dim hdrRange As Range
+    Dim shp As Shape
+    Dim noiDungWM As String
+    Dim i As Integer
+    
+    Set doc = ActiveDocument
+    noiDungWM = "Tung Dvan"
+    
+    ' Ap dung watermark cho tat ca cac Section trong tai lieu
+    For Each sec In doc.Sections
+    
+        ' Xoa watermark cu neu co (tranh chong lap khi chay lai)
+        For i = sec.Headers(wdHeaderFooterPrimary).Shapes.Count To 1 Step -1
+            If InStr(1, sec.Headers(wdHeaderFooterPrimary).Shapes(i).Name, "PowerPlusWaterMarkObject") > 0 Then
+                sec.Headers(wdHeaderFooterPrimary).Shapes(i).Delete
+            End If
+        Next i
+        
+        ' Tao Shape dang WordArt/TextEffect lam watermark
+        Set shp = sec.Headers(wdHeaderFooterPrimary).Shapes.AddTextEffect( _
+            PresetTextEffect:=msoTextEffect1, _
+            Text:=noiDungWM, _
+            FontName:="Times New Roman", _
+            FontSize:=1, _
+            FontBold:=False, _
+            FontItalic:=False, _
+            Left:=0, _
+            Top:=0)
+        
+        With shp
+            .Name = "PowerPlusWaterMarkObject" & Format(Now, "hhmmss") & i
+            
+            ' Kich thuoc khung watermark (pt)
+            .Width = CentimetersToPoints(20.29)   ' tuong duong 575.15pt
+            .Height = CentimetersToPoints(4.51)   ' tuong duong 127.8pt
+            
+            ' Xoay 315 do
+            .Rotation = 315
+            
+            ' Mau bac (silver), khong vien
+            .Fill.ForeColor.RGB = RGB(192, 192, 192)   ' Silver
+            .Fill.Transparency = 0.5                    ' Do mo 50%
+            .Line.Visible = msoFalse
+            
+            ' Khong khoa ty le, cho phep di chuyen tu do trong khung
+            .LockAspectRatio = msoFalse
+            
+            ' Canh giua trang theo chieu ngang va doc (dua theo margin)
+            .RelativeHorizontalPosition = wdRelativeHorizontalPositionMargin
+            .RelativeVerticalPosition = wdRelativeVerticalPositionMargin
+            .Left = wdShapeCenter
+            .Top = wdShapeCenter
+            
+            ' Dua watermark ra sau noi dung van ban
+            .WrapFormat.AllowOverlap = True
+            .ZOrder msoSendBehindText
+            
+            ' Cho phep watermark hien thi ca khi khong o che do Header
+            .LayoutInCell = False
+        End With
+        
+    Next sec
+    
+    MsgBox "Da tao watermark xong!", vbInformation, "Hoan tat"
+
+End Sub
+```
+
+# 8. Page setup
+
+```sh
+Sub ThietLapPageSetup()
+
+    Dim doc As Document
+    
+    Set doc = ActiveDocument
+    
+    With doc.PageSetup
+        ' Can le
+        .TopMargin = CentimetersToPoints(1.5)
+        .BottomMargin = CentimetersToPoints(1.5)
+        .LeftMargin = CentimetersToPoints(1.5)
+        .RightMargin = CentimetersToPoints(1.5)
+        
+        ' Gutter
+        .Gutter = CentimetersToPoints(0)
+        .GutterPos = wdGutterPosLeft
+        
+        ' Huong trang: Portrait
+        .Orientation = wdOrientPortrait
+        
+        ' Ap dung cho toan bo tai lieu
+        .SectionStart = wdSectionContinuous
+    End With
+    
+    ' Ap dung Multiple Pages: Normal cho toan bo Section trong tai lieu
+    Dim sec As Section
+    For Each sec In doc.Sections
+        sec.PageSetup.MultiplePages = wdMultiplePagesNormal
+    Next sec
+    
+    MsgBox "Da thiet lap Page Setup xong!", vbInformation, "Hoan tat"
+
+End Sub
+```
