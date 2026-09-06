@@ -394,15 +394,10 @@ Sub ThietLapPageSetup()
         ' Huong trang: Portrait
         .Orientation = wdOrientPortrait
         
-        ' Ap dung cho toan bo tai lieu
-        .SectionStart = wdSectionContinuous
+        ' Che do "Normal" (khong mirror margins, khong book fold)
+        .MirrorMargins = False
+        .BookFoldPrinting = False
     End With
-    
-    ' Ap dung Multiple Pages: Normal cho toan bo Section trong tai lieu
-    Dim sec As Section
-    For Each sec In doc.Sections
-        sec.PageSetup.MultiplePages = wdMultiplePagesNormal
-    Next sec
     
     MsgBox "Da thiet lap Page Setup xong!", vbInformation, "Hoan tat"
 
@@ -448,6 +443,28 @@ Sub ChenSoTrang()
     Next sec
     
     MsgBox "Da chen so trang xong!", vbInformation, "Hoan tat"
+
+End Sub
+```
+
+# 10. AutoFit Windows
+
+```sh
+Sub BatAutoFitWindow()
+
+    Dim tbl As Table
+    Dim demSoBang As Long
+    
+    demSoBang = 0
+    
+    For Each tbl In ActiveDocument.Tables
+        tbl.AutoFitBehavior wdAutoFitWindow
+        demSoBang = demSoBang + 1
+    Next tbl
+    
+    MsgBox "Da hoan thanh!" & vbCrLf & _
+           "Da bat AutoFit Window cho " & demSoBang & " bang da duyet.", _
+           vbInformation, "Hoan tat"
 
 End Sub
 ```
