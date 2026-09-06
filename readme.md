@@ -468,3 +468,45 @@ Sub BatAutoFitWindow()
 
 End Sub
 ```
+
+# 11. In đậm "Đáp số:"
+
+```sh
+Sub InDamDapSo()
+
+    Dim rng As Range
+    Dim demSoLan As Long
+    Dim mauTim As String
+
+    demSoLan = 0
+
+    ' Dung ChrW de dung ky tu co dau, tranh loi hien thi dau trong VBA Editor
+    mauTim = ChrW(272) & ChrW(225) & "p s" & ChrW(7889) & ":"
+
+    Set rng = ActiveDocument.Content
+
+    With rng.Find
+        .ClearFormatting
+        .Replacement.ClearFormatting
+
+        .Text = mauTim
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchWildcards = False
+        .MatchCase = False   ' Khong phan biet in hoa/thuong
+
+        Do While .Execute
+            rng.Font.Bold = True
+            demSoLan = demSoLan + 1
+            rng.Collapse wdCollapseEnd
+        Loop
+    End With
+
+    MsgBox "Da hoan thanh!" & vbCrLf & _
+           "Da in dam " & demSoLan & " cum 'Dap so:' da duyet.", _
+           vbInformation, "Hoan tat"
+
+End Sub
+```
+
