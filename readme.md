@@ -408,3 +408,46 @@ Sub ThietLapPageSetup()
 
 End Sub
 ```
+
+# 9. Số trang
+
+```sh
+Sub ChenSoTrang()
+
+    Dim doc As Document
+    Dim sec As Section
+    Dim ftr As HeaderFooter
+    Dim rng As Range
+    
+    Set doc = ActiveDocument
+    
+    For Each sec In doc.Sections
+    
+        ' Dat Footer from Bottom = 0.5 cm
+        sec.PageSetup.FooterDistance = CentimetersToPoints(0.5)
+        
+        Set ftr = sec.Footers(wdHeaderFooterPrimary)
+        
+        ' Xoa noi dung cu trong Footer (neu co)
+        ftr.Range.Delete
+        
+        Set rng = ftr.Range
+        
+        ' Chen field so trang
+        rng.Fields.Add Range:=rng, Type:=wdFieldPage
+        
+        ' Can giua
+        ftr.Range.ParagraphFormat.Alignment = wdAlignParagraphCenter
+        
+        ' Dinh dang font: Times New Roman, co 12
+        ftr.Range.Font.Name = "Times New Roman"
+        ftr.Range.Font.Size = 12
+        ftr.Range.Font.Bold = False
+        ftr.Range.Font.Italic = False
+        
+    Next sec
+    
+    MsgBox "Da chen so trang xong!", vbInformation, "Hoan tat"
+
+End Sub
+```
