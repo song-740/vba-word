@@ -510,3 +510,78 @@ Sub InDamDapSo()
 End Sub
 ```
 
+# 12. Xóa viền tất cả các bảng trừ bẳng tiêu đề 
+
+```sh
+Sub XoaVienBangTruKieuDoi()
+
+    Dim tbl As Table
+    Dim demXoa As Long
+    Dim demGiuLai As Long
+    Dim laVienDoi As Boolean
+    
+    demXoa = 0
+    demGiuLai = 0
+    
+    For Each tbl In ActiveDocument.Tables
+    
+        laVienDoi = False
+        
+        ' Kiem tra vien tren cua bang: neu la duong doi (Double) va do day 1.5pt thi giu lai
+        On Error Resume Next
+        If tbl.Borders(wdBorderTop).LineStyle = wdLineStyleDouble _
+           And tbl.Borders(wdBorderTop).LineWidth = wdLineWidth150pt Then
+            laVienDoi = True
+        End If
+        On Error GoTo 0
+        
+        If laVienDoi Then
+            ' Giu nguyen vien, khong lam gi ca
+            demGiuLai = demGiuLai + 1
+        Else
+            ' Xoa toan bo vien (ca vien ngoai lan vien trong)
+            tbl.Borders.Enable = False
+            demXoa = demXoa + 1
+        End If
+        
+    Next tbl
+    
+    MsgBox "Da hoan thanh!" & vbCrLf & _
+           "Da xoa vien: " & demXoa & " bang." & vbCrLf & _
+           "Da giu lai vien (khung doi 1.5pt): " & demGiuLai & " bang.", _
+           vbInformation, "Hoan tat"
+
+End Sub
+```
+
+# 13. Căn giữa theo chiều dọc của bảng
+
+```
+Sub CanGiuaNoiDungBang()
+
+    Dim tbl As Table
+    Dim cel As Cell
+    Dim demSoBang As Long
+    Dim demSoO As Long
+    
+    demSoBang = 0
+    demSoO = 0
+    
+    For Each tbl In ActiveDocument.Tables
+    
+        For Each cel In tbl.Range.Cells
+            cel.VerticalAlignment = wdCellAlignVerticalCenter
+            demSoO = demSoO + 1
+        Next cel
+        
+        demSoBang = demSoBang + 1
+        
+    Next tbl
+    
+    MsgBox "Da hoan thanh!" & vbCrLf & _
+           "Da can giua " & demSoO & " o, thuoc " & demSoBang & " bang da duyet.", _
+           vbInformation, "Hoan tat"
+
+End Sub
+```
+
