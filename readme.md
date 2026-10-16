@@ -585,3 +585,60 @@ Sub CanGiuaNoiDungBang()
 End Sub
 ```
 
+## 14. In đậm Câu 1.
+
+```ps
+Sub InDamCauVaThongKe()
+
+    Dim rng As Range
+    Dim tongSo As Long
+    Dim thanhCong As Long
+    Dim thatBai As Long
+
+    Set rng = ActiveDocument.Content
+
+    tongSo = 0
+    thanhCong = 0
+    thatBai = 0
+
+    With rng.Find
+        .ClearFormatting
+        .Text = "Câu [0-9]@."
+        .MatchWildcards = True
+        .MatchCase = False
+        .Wrap = wdFindStop
+        .Forward = True
+        .Format = False
+    End With
+
+    Do While rng.Find.Execute
+
+        tongSo = tongSo + 1
+
+        On Error Resume Next
+        Err.Clear
+
+        rng.Font.Bold = True
+
+        If Err.Number = 0 Then
+            thanhCong = thanhCong + 1
+        Else
+            thatBai = thatBai + 1
+        End If
+
+        On Error GoTo 0
+
+        rng.Collapse Direction:=wdCollapseEnd
+
+    Loop
+
+    MsgBox "KET QUA IN DAM" & vbCrLf & _
+           "-----------------------------" & vbCrLf & _
+           "Tong so cum tim thay: " & tongSo & vbCrLf & _
+           "In dam thanh cong: " & thanhCong & vbCrLf & _
+           "In dam that bai: " & thatBai, _
+           vbInformation, "Thong ke in dam"
+
+End Sub
+```
+
